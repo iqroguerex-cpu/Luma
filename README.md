@@ -8,7 +8,7 @@ Luma is a calming, nature-themed web application designed to provide a safe and 
 
 You can interact with a live version of Luma here:
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen?style=for-the-badge)](https://your-live-demo-link.com)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Now-brightgreen?style=for-the-badge)](https://luma-osc4.onrender.com)
 
 ---
 
