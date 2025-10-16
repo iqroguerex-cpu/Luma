@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luma</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            /* --- Nature & Comfort Theme --- */
+            --background-color: #F4F1E9;      /* A soft, warm linen background */
+            --container-bg: #EAE6DA;          /* A slightly darker, earthy beige */
+            --user-bubble-bg: #E0DCD1;        /* A warm, stone-like gray for the user */
+            --ai-bubble-bg: #FFFFFF;          /* Clean, soft white for clarity */
+            --header-bg: #A7BEA9;             /* A calming, muted sage green */
+            --text-color: #4A443B;            /* A deep, rich soil brown */
+            --placeholder-text: #8E887B;      /* A softer, muted stone color */
+            --shadow-color: rgba(74, 68, 59, 0.1); /* Shadow based on the new text color */
+            --send-button-bg: #A7BEA9;         /* Sage green to match the header */
+            --send-button-hover: #93ab95;      /* A slightly darker sage for hover */
+            
+            /* --- Unchanged Variables --- */
+            --main-font: 'Nunito', sans-serif;
+            --base-font-size: 16px;
+            --border-radius-large: 20px;
+            --border-radius-medium: 15px;
+            --border-radius-small: 10px;
+            --container-padding: 20px;
+            --bubble-padding: 12px 18px;
+            --global-transition: all 0.3s ease-in-out;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html { font-size: var(--base-font-size); }
+        body { font-family: var(--main-font); background-color: var(--background-color); color: var(--text-color); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 1rem; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        .chat-container { width: 100%; max-width: 800px; height: 90vh; max-height: 800px; background-color: var(--container-bg); border-radius: var(--border-radius-large); box-shadow: 0 10px 30px var(--shadow-color); display: flex; flex-direction: column; overflow: hidden; transition: var(--global-transition); }
+        .chat-header { background-color: var(--header-bg); padding: 1.2rem var(--container-padding); text-align: center; box-shadow: 0 4px 10px var(--shadow-color); z-index: 10; }
+        .chat-header h1 { font-size: 1.5rem; font-weight: 700; color: var(--text-color); }
+        .chat-messages { flex-grow: 1; padding: var(--container-padding); overflow-y: auto; display: flex; flex-direction: column; gap: 1rem; scroll-behavior: smooth; }
+        .chat-messages::-webkit-scrollbar { width: 8px; }
+        .chat-messages::-webkit-scrollbar-track { background: transparent; }
+        .chat-messages::-webkit-scrollbar-thumb { background-color: var(--placeholder-text); border-radius: 20px; border: 2px solid var(--container-bg); }
+        .message-bubble { max-width: 75%; padding: var(--bubble-padding); border-radius: var(--border-radius-medium); line-height: 1.6; font-size: 1rem; opacity: 0; transform: translateY(20px); animation: popIn 0.4s forwards ease-out; }
+        @keyframes popIn { to { opacity: 1; transform: translateY(0); } }
+        .message-bubble.user { background-color: var(--user-bubble-bg); color: var(--text-color); align-self: flex-end; border-bottom-right-radius: var(--border-radius-small); }
+        .message-bubble.ai { background-color: var(--ai-bubble-bg); color: var(--text-color); align-self: flex-start; border-bottom-left-radius: var(--border-radius-small); box-shadow: 0 2px 5px var(--shadow-color); }
+        
+        /* ======================================== */
+        /* UPDATED: Bouncing Bubbles CSS       */
+        /* ======================================== */
+        .typing-indicator {
+            align-self: flex-start; /* Aligns bubble to the left */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: var(--bubble-padding);
+            background-color: var(--ai-bubble-bg);
+            border-radius: var(--border-radius-medium);
+            border-bottom-left-radius: var(--border-radius-small);
+            box-shadow: 0 2px 5px var(--shadow-color);
+            /* Add the same pop-in animation as a regular message */
+            opacity: 0;
+            transform: translateY(20px);
+            animation: popIn 0.4s forwards ease-out;
+        }
+        
+        .typing-indicator .bubble {
+            width: 10px;
+            height: 10px;
+            background-color: var(--placeholder-text);
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out both;
+        }
+        .typing-indicator .bubble.one { animation-delay: 0s; }
+        .typing-indicator .bubble.two { animation-delay: 0.2s; }
+        .typing-indicator .bubble.three { animation-delay: 0.4s; }
+        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1.0); } }
+        
+        .chat-input-form { display: flex; align-items: center; padding: 1rem var(--container-padding); background-color: var(--container-bg); border-top: 1px solid rgba(0, 0, 0, 0.05); }
+        .chat-input { flex-grow: 1; border: none; background-color: #FFFFFF; padding: 0.9rem 1.2rem; border-radius: var(--border-radius-medium); font-family: var(--main-font); font-size: 1rem; color: var(--text-color); box-shadow: inset 0 2px 4px var(--shadow-color); transition: var(--global-transition); }
+        .chat-input::placeholder { color: var(--placeholder-text); }
+        .chat-input:focus { outline: none; box-shadow: inset 0 2px 4px var(--shadow-color), 0 0 0 3px var(--header-bg); }
+        .send-button { background-color: var(--send-button-bg); border: none; color: white; padding: 0.7rem; margin-left: 1rem; border-radius: 50%; cursor: pointer; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; transition: var(--global-transition); box-shadow: 0 4px 8px var(--shadow-color); }
+        .send-button svg { width: 24px; height: 24px; }
+        .send-button:hover { background-color: var(--send-button-hover); transform: translateY(-2px); box-shadow: 0 6px 12px var(--shadow-color); }
+        .send-button:active { transform: translateY(0); box-shadow: 0 4px 8px var(--shadow-color); }
+        @media (max-width: 768px) { body { padding: 0; } .chat-container { height: 100vh; width: 100vw; max-height: none; border-radius: 0; } .chat-header h1 { font-size: 1.25rem; } :root { --container-padding: 15px; --base-font-size: 15px; } }
+        @media (max-width: 480px) { .chat-input-form { padding: 0.75rem; } .chat-input { padding: 0.8rem 1rem; } .send-button { width: 45px; height: 45px; margin-left: 0.75rem; } .send-button svg { width: 20px; height: 20px; } :root { --bubble-padding: 10px 15px; } }
+        @media (min-width: 1600px) { :root { --base-font-size: 20px; } .chat-container { max-width: 1000px; max-height: 950px; } }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <header class="chat-header">
+            <h1>Luma</h1>
+        </header>
+
+        <div class="chat-messages" id="chat-messages">
+            <% chatHistory.forEach(message => { %>
+                <% if (message.role === 'user') { %>
+                    <div class="message-bubble user"><%- message.content %></div>
+                <% } else if (message.role === 'assistant') { %>
+                    <div class="message-bubble ai"><%- message.content %></div>
+                <% } %>
+            <% }); %>
+        </div>
+        
+        <form class="chat-input-form" id="chat-form">
+            <input 
+                type="text" 
+                id="chat-input" 
+                class="chat-input" 
+                placeholder="Tell me what's on your mind..."
+                autocomplete="off"
+                required>
+            <button type="submit" class="send-button" aria-label="Send message">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </form>
+
+        </div>
+
+    <script>
+        const chatForm = document.getElementById('chat-form');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const chatId = '<%- chatId %>';
+
+        chatForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const userMessage = chatInput.value.trim();
+            if (!userMessage) return;
+
+            addMessage(userMessage, 'user');
+            chatInput.value = '';
+            showTypingIndicator(); // Show the indicator right after the user message
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: userMessage, chatId: chatId })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Network response was not ok');
+                }
+
+                const data = await response.json();
+                addMessage(data.reply, 'ai');
+            } catch (error) {
+                console.error('Fetch Error:', error);
+                addMessage(error.message, 'ai');
+            } finally {
+                hideTypingIndicator(); // IMPORTANT: Remove the indicator before adding the AI's final message
+            }
+        });
+
+        function addMessage(text, sender) {
+            const messageBubble = document.createElement('div');
+            messageBubble.classList.add('message-bubble', sender);
+            messageBubble.textContent = text;
+            chatMessages.appendChild(messageBubble);
+            scrollToBottom();
+        }
+        
+        /**
+         * Creates and displays the typing indicator in the chat window.
+         */
+        function showTypingIndicator() {
+            // Prevent adding multiple indicators
+            if (document.getElementById('typing-indicator')) return;
+
+            const indicator = document.createElement('div');
+            indicator.id = 'typing-indicator';
+            indicator.className = 'typing-indicator'; // Use the styled class
+            indicator.innerHTML = `
+                <div class="bubble one"></div>
+                <div class="bubble two"></div>
+                <div class="bubble three"></div>
+            `;
+            chatMessages.appendChild(indicator);
+            scrollToBottom();
+        }
+
+        /**
+         * Finds and removes the typing indicator from the chat window.
+         */
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function scrollToBottom() {
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 50);
+        }
+
+        window.onload = () => {
+            scrollToBottom();
+            chatInput.focus();
+        };
+    </script>
+</body>
+</html>
