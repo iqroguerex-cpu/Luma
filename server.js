@@ -84,7 +84,7 @@ app.post('/chat', async (req, res) => {
         const response = await axios.post(
             'https://openrouter.ai/api/v1/chat/completions',
             {
-                model: 'meta-llama/llama-3.3-8b-instruct:free',
+                model: 'nvidia/nemotron-nano-12b-v2-vl:free',
                 messages: currentChatHistory
             },
             { headers: { 'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}` } }
@@ -103,4 +103,5 @@ app.post('/chat', async (req, res) => {
 // --- Start the Server ---
 app.listen(PORT, () => {
     console.log(`Server is running smoothly on http://localhost:${PORT} 🚀`);
+
 });
