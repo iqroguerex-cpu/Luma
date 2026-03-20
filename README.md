@@ -14,7 +14,7 @@ You can interact with a live version of Luma here:
 
 ## ✍️ Author
 
-**Chinmay Chatradamath**.
+**Chinmay Chatradamath.....**.
 
 ---
 
